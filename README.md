@@ -1,0 +1,2 @@
+# EibaKatsuSecondGenerative_ERC721A
+https://discord.com/channels/981901544838529025/988430118852657192/989712175159459860 
