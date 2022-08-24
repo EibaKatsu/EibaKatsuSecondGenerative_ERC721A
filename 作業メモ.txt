@@ -1,0 +1,49 @@
+
+
+# githubプロジェクト
+https://github.com/EibaKatsu/EibaKatsuSecondGenerative_ERC721A
+
+
+## hardhat projectの作成
+
+# ディレクトリ作成
+mkdir EibaKatsuSecondGenerative
+cd EibaKatsuSecondGenerative
+
+# npm 初期化
+npm init --yes
+
+# harthatインストール
+npm install --save-dev hardhat
+
+# hardhat設定ファイル作成
+npx hardhat
+　→「Create an empty hardhat.config.js」を選択。残りは全て y
+
+# プラグイン追加
+npm install --save-dev @nomiclabs/hardhat-ethers ethers @nomiclabs/hardhat-waffle ethereum-waffle chai
+
+# git 初期化
+git init
+
+# githubリポジトリに紐づけ
+git remote add origin https://github.com/EibaKatsu/EibaKatsuSecondGenerative_ERC721A.git
+
+# リポジトリ確認
+git remote -v
+
+# mainブランチの作成
+git branch -M main
+
+# EibaKatsuSecondGenerative.solを登録
+https://discord.com/channels/981901544838529025/988430118852657192/989712175159459860 で作成したもの
+
+# openzeppelinをインストール
+npm install @openzeppelin/contracts
+
+# ERC721Aをインストール
+npm install --save-dev erc721a
+
+# コンパイル
+npx hardhat compile
+
