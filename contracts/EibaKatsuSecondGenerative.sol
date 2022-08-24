@@ -27,6 +27,7 @@ pragma solidity >=0.7.0 <0.9.0;
 
 import "erc721a/contracts/ERC721A.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "hardhat/console.sol"; 
 
 contract EibaKatsuSecondGenerative is ERC721A, Ownable {
     string baseURI;
@@ -55,6 +56,14 @@ contract EibaKatsuSecondGenerative is ERC721A, Ownable {
 
     // public
     function mint(uint256 _mintAmount) public payable {
+
+    console.log(
+      " cost confirmation.\n value: %s,\n sender: %s,\n owner: %s",
+      msg.value,
+      msg.sender,
+      owner()
+    );
+
         require(!paused, "the contract is paused");
         uint256 supply = totalSupply();
         require(_mintAmount > 0, "need to mint at least 1 NFT");
