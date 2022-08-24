@@ -47,3 +47,12 @@ npm install --save-dev erc721a
 # コンパイル
 npx hardhat compile
 
+## テスト準備
+# 必要なパッケージのインストール
+npm install --save mocha ganache-cli web3
+
+# testフォルダ配下にテストコードを記載
+
+# テスト実行
+npx hardhat test
+

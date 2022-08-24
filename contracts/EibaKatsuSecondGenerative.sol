@@ -25,32 +25,32 @@ SOFTWARE.
 
 pragma solidity >=0.7.0 <0.9.0;
 
-import 'erc721a/contracts/ERC721A.sol';
+import "erc721a/contracts/ERC721A.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract EibaKatsuSecondGenerative is ERC721A, Ownable {
-
     string baseURI;
     string public baseExtension = ".json";
-    uint256 public cost = 0;
+    uint256 public cost = 0.0005 ether;
     uint256 public maxSupply = 1000;
     uint256 public preSaleSupply = 1000;
     uint256 public maxMintAmount = 5;
-    bool public paused = true;
+    bool public paused = false;
     bool public onlyWhitelisted = true;
     mapping(address => uint256) public whitelistUserAmount;
     mapping(address => uint256) public whitelistMintedAmount;
-    
 
     constructor(
-    ) ERC721A('token_name', 'token_code') {
-        setBaseURI('ipfs://QmUDmP33fDpBZgmJt5zEbE6N5gWbQCTuVFDvvzSQCSYKCx/');
+        string memory token_name,
+        string memory token_code,
+        string memory _initBaseURI
+    ) ERC721A(token_name, token_code) {
+        setBaseURI(_initBaseURI);
     }
 
     // internal
     function _baseURI() internal view virtual override returns (string memory) {
         return baseURI;
-        
     }
 
     // public
@@ -58,16 +58,29 @@ contract EibaKatsuSecondGenerative is ERC721A, Ownable {
         require(!paused, "the contract is paused");
         uint256 supply = totalSupply();
         require(_mintAmount > 0, "need to mint at least 1 NFT");
-        require(_mintAmount <= maxMintAmount, "max mint amount per session exceeded");
+        require(
+            _mintAmount <= maxMintAmount,
+            "max mint amount per session exceeded"
+        );
         require(supply + _mintAmount <= maxSupply, "max NFT limit exceeded");
-        require(supply + _mintAmount <= preSaleSupply, "pre Sale NFT limit exceeded");
+        require(
+            supply + _mintAmount <= preSaleSupply,
+            "pre Sale NFT limit exceeded"
+        );
 
         // Owner also can mint.
         if (msg.sender != owner()) {
             require(msg.value >= cost * _mintAmount, "insufficient funds");
-            if(onlyWhitelisted == true) {
-                require(whitelistUserAmount[msg.sender] != 0, "user is not whitelisted");
-                require(whitelistMintedAmount[msg.sender] + _mintAmount <= whitelistUserAmount[msg.sender], "max NFT per address exceeded");
+            if (onlyWhitelisted == true) {
+                require(
+                    whitelistUserAmount[msg.sender] != 0,
+                    "user is not whitelisted"
+                );
+                require(
+                    whitelistMintedAmount[msg.sender] + _mintAmount <=
+                        whitelistUserAmount[msg.sender],
+                    "max NFT per address exceeded"
+                );
                 whitelistMintedAmount[msg.sender] += _mintAmount;
             }
         }
@@ -75,7 +88,10 @@ contract EibaKatsuSecondGenerative is ERC721A, Ownable {
         _safeMint(msg.sender, _mintAmount);
     }
 
-    function airdropMint(address[] calldata _airdropAddresses , uint256[] memory _UserMintAmount) public onlyOwner{
+    function airdropMint(
+        address[] calldata _airdropAddresses,
+        uint256[] memory _UserMintAmount
+    ) public onlyOwner {
         uint256 supply = totalSupply();
         uint256 _mintAmount = 0;
         for (uint256 i = 0; i < _UserMintAmount.length; i++) {
@@ -85,30 +101,39 @@ contract EibaKatsuSecondGenerative is ERC721A, Ownable {
         require(supply + _mintAmount <= maxSupply, "max NFT limit exceeded");
 
         for (uint256 i = 0; i < _UserMintAmount.length; i++) {
-            _safeMint(_airdropAddresses[i], _UserMintAmount[i] );
+            _safeMint(_airdropAddresses[i], _UserMintAmount[i]);
         }
     }
 
-    function setWhitelist(address[] memory addresses, uint256[] memory saleSupplies) public onlyOwner {
+    function setWhitelist(
+        address[] memory addresses,
+        uint256[] memory saleSupplies
+    ) public onlyOwner {
         require(addresses.length == saleSupplies.length);
         for (uint256 i = 0; i < addresses.length; i++) {
             whitelistUserAmount[addresses[i]] = saleSupplies[i];
         }
     }
 
-
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory){
-        return string(abi.encodePacked(ERC721A.tokenURI(tokenId), baseExtension));
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
+        return
+            string(abi.encodePacked(ERC721A.tokenURI(tokenId), baseExtension));
     }
 
-    //only owner  
+    //only owner
     function setCost(uint256 _newCost) public onlyOwner {
         cost = _newCost;
     }
 
     function setOnlyWhitelisted(bool _state) public onlyOwner {
         onlyWhitelisted = _state;
-    }    
+    }
 
     function setpreSaleSupply(uint256 _newpreSaleSupply) public onlyOwner {
         preSaleSupply = _newpreSaleSupply;
@@ -117,19 +142,22 @@ contract EibaKatsuSecondGenerative is ERC721A, Ownable {
     function setmaxMintAmount(uint256 _newmaxMintAmount) public onlyOwner {
         maxMintAmount = _newmaxMintAmount;
     }
-  
+
     function setBaseURI(string memory _newBaseURI) public onlyOwner {
         baseURI = _newBaseURI;
     }
 
-    function setBaseExtension(string memory _newBaseExtension) public onlyOwner {
+    function setBaseExtension(string memory _newBaseExtension)
+        public
+        onlyOwner
+    {
         baseExtension = _newBaseExtension;
     }
 
     function pause(bool _state) public onlyOwner {
         paused = _state;
     }
- 
+
     function withdraw() public payable onlyOwner {
         (bool os, ) = payable(owner()).call{value: address(this).balance}("");
         require(os);
@@ -137,5 +165,5 @@ contract EibaKatsuSecondGenerative is ERC721A, Ownable {
 
     function _startTokenId() internal view virtual override returns (uint256) {
         return 1;
-    }    
+    }
 }
